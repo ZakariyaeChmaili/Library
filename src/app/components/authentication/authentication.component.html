@@ -1,0 +1,46 @@
+
+<div class="container">
+  <div class="row justify-content-center mt-5">
+    <div class="col col-md-6">
+      <div class="card text-center shadow border border-primary">
+        <div class="card-header lead text-primary p-3">Log-in</div>
+        <div class="card-body m-3">
+          <div class="input-group my-3 border border-primary  rounded">
+            <span
+              class="input-group-text bg-primary bg-opacity-10 text-primary"
+              id="username"
+              >Username</span
+            >
+
+            <input
+              aria-describedby="username"
+              type="text"
+              [(ngModel)]="username"
+              name="username"
+              class="form-control"
+            />
+          </div>
+
+          <div class="input-group my-3 border border-primary  rounded">
+            <span class="input-group-text bg-primary bg-opacity-10 text-primary"
+              >Password</span
+            >
+            <input
+              type="text"
+              [(ngModel)]="password"
+              name="password"
+              class="form-control"
+              id="passowrd"
+            />
+          </div>
+        </div>
+        <div class="card-footer p-3">
+          <div class="d-flex gap-3 justify-content-end">
+            <button class="btn btn-outline-secondary" (click)="signup()">Sign-up</button>
+            <button class="btn btn-outline-primary" (click)="login()">Sign-in</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

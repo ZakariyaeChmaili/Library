@@ -1,0 +1,234 @@
+<div class="container">
+  <ng-container *ngIf="books$ | async as books">
+    <div class="row justify-content-center gap-lg-5 mt-5">
+      <div class="col col-lg-5 align-items-center d-flex">
+        <div class="card shadow flex-grow-1">
+          <div class="card-header">
+            <div class="input-group my-2">
+              <span class="input-group-text flex-grow-1"
+                ><span class="lead">List of books</span></span
+              >
+              <button
+                class="btn btn-outline-primary"
+                data-bs-toggle="modal"
+                data-bs-target="#bookForm"
+                (click)="addBookModal()"
+              >
+                Add+
+              </button>
+            </div>
+          </div>
+          <div class="card-body">
+            <!-- <div class="input-group my-2">
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Search books"
+                aria-label="Search books"
+              />
+              <button class="btn btn-outline-primary" type="button">
+                Search
+              </button>
+            </div> -->
+
+            <ul class="list-group">
+              <ng-container
+                *ngFor="let book of books._embedded.livres; let i = index"
+              >
+                <li
+                  (click)="showBook(i)"
+                  class="list-group-item list-group-item-action"
+                  [class.active]="i == index"
+                >
+                  {{ book.titre }}
+                </li>
+              </ng-container>
+            </ul>
+            <div class="d-flex justify-content-end my-2">
+              <nav aria-label="Page navigation example ">
+                <ul class="pagination">
+                  <li class="page-item">
+                    <button
+                      class="page-link"
+                      [class.disabled]="page == 0 ? true : false"
+                      (click)="prevPage()"
+                      [disabled]="page == 0 ? true : false"
+                    >
+                      Previous
+                    </button>
+                  </li>
+                  <ng-container
+                    *ngFor="
+                      let index of turnNumIntoArray(books.page.totalPages)
+                    "
+                  >
+                    <li class="page-item" [class.active]="index == page">
+                      <a class="page-link" (click)="showPage(index)">{{
+                        index + 1
+                      }}</a>
+                    </li>
+                  </ng-container>
+                  <li class="page-item">
+                    <button
+                      class="page-link"
+                      [class.disabled]="
+                        page >= books.page.totalPages - 1 ? true : false
+                      "
+                      (click)="nextPage()"
+                      [disabled]="
+                        page >= books.page.totalPages - 1 ? true : false
+                      "
+                    >
+                      Next
+                    </button>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col col-lg-5">
+        <div class="card shadow">
+          <div class="card-header text-center lead">Preview Of The Books</div>
+          <div class="card-body">
+            <div class="row justify-content-center">
+              <div class="col align-items-center flex-column d-flex">
+                <img
+                  src="{{ books._embedded.livres[index].url }}"
+                  class="d-block w-50"
+                  alt="..."
+                />
+                <div class="text-start">
+                  <div class="lead">
+                    <span class="text-primary"> Author:</span
+                    >{{ books._embedded.livres[index].auteur }}
+                  </div>
+                  <div class="lead">
+                    <span class="text-primary">Title: </span>
+                    {{ books._embedded.livres[index].titre }}
+                  </div>
+                  <div class="lead">
+                    <span class="text-primary"> Number Of Copies:</span>
+                    {{ books._embedded.livres[index].nb_exemplaire }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card-footer text-center">
+            <div class="d-flex justify-content-end gap-3">
+              <button
+                class="btn btn-outline-danger"
+                (click)="deleteBook(books._embedded.livres[index])"
+              >
+                delete
+              </button>
+              <button
+                class="btn btn-outline-primary"
+                data-bs-toggle="modal"
+                data-bs-target="#bookForm"
+                (click)="editBookModal(books._embedded.livres[index])"
+              >
+                edit
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="modal fade"
+      id="bookForm"
+      tabindex="-1"
+      aria-labelledby="exampleModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">
+              {{ formFlag.title }}
+            </h1>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form [formGroup]="bookFormGroup">
+              <div class="mb-3">
+                <label for="auteur" class="form-label">Author</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="auteur"
+                  placeholder="Enter author's name"
+                  formControlName="auteur"
+                  name="auteur"
+                />
+              </div>
+              <div class="mb-3">
+                <label for="titre" class="form-label">Title</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="titre"
+                  placeholder="Enter book title"
+                  formControlName="titre"
+                  name="titre"
+                />
+              </div>
+              <div class="mb-3">
+                <label for="nb_exemplaire" class="form-label"
+                  >Number of Copies</label
+                >
+                <input
+                  type="number"
+                  class="form-control"
+                  id="nb_exemplaire"
+                  placeholder="Enter number of copies"
+                  formControlName="nb_exemplaire"
+                  name="nb_exemplaire"
+                />
+              </div>
+              <div class="mb-3">
+                <label for="url" class="form-label">Image URL</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="url"
+                  placeholder="Enter image URL"
+                  formControlName="url"
+                  name="url"
+                />
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              id="buttonCloseModal"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              (click)="formSubmit(books._embedded.livres[index])"
+            >
+              Save
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>
+
+<!-- Modal -->
