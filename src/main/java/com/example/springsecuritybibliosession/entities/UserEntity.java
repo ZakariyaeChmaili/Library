@@ -17,37 +17,26 @@ import java.util.List;
 @NoArgsConstructor
 @Table(name="utilisateur")
 public class UserEntity implements UserDetails {
-
     @Id
     @Column(name = "login")
     String username;
     String password;
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("USER"));
     }
-
-    @Override
-    public String getUsername() {
-        return this.username;
-    }
-
     @Override
     public boolean isAccountNonExpired() {
         return true;
     }
-
     @Override
     public boolean isAccountNonLocked() {
         return true;
     }
-
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
     }
-
     @Override
     public boolean isEnabled() {
         return true;
