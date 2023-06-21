@@ -21,7 +21,7 @@ import { ToastComponent } from './components/toast/toast.component';
     LoadingComponent,
     TopNavComponent,
     IndexComponent,
-    ToastComponent
+    ToastComponent,
   ],
   imports: [
     BrowserModule,

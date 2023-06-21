@@ -34,6 +34,8 @@ export class AuthenticationComponent implements OnInit {
         if(data){
           localStorage.setItem("user",JSON.stringify(data))
           localStorage.setItem("sessionId",data.sessionId);
+        this.toastService.show("Welcome","success");
+
           this.route.navigate(["home"])
         }
       },
@@ -41,7 +43,7 @@ export class AuthenticationComponent implements OnInit {
         console.log("inside error in authentication");
         this.loadinService.close();
 
-        this.toastService.show("test");
+        this.toastService.show("Wrong Credentials","danger");
 
 
       }
@@ -56,11 +58,15 @@ signup(){
     next:data=>{
       console.log(data)
       this.loadinService.close();
+      this.toastService.show("The Account Has been created","success");
+
 
     },
     error:err=>{
       console.log(err)
       this.loadinService.close();
+      this.toastService.show(err.msg,"warning");
+
 
 
     }

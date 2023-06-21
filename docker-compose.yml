@@ -1,0 +1,27 @@
+version: '3'
+services:
+  db:
+    image: zakariyae007/angular-spring-mysql:mysql
+    restart: always
+    environment:
+      - MYSQL_PASSWORD=123
+      - MYSQL_USER=sa
+      - MYSQL_ROOT_PASSWORD=123
+      - MYSQL_DATABASE=biblio
+    ports:
+     - 3306:3306
+
+
+  back-end:
+    depends_on:
+      - db
+    image: zakariyae007/angular-spring-mysql:back-end
+    ports:
+     - 8080:8080
+
+
+  front-end:
+    image: zakariyae007/angular-spring-mysql:front-end
+    ports:
+     - 4200:80
+

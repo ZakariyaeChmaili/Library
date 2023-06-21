@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { Observable } from 'rxjs';
+import { Observable, map, tap } from 'rxjs';
 import { BooksService } from 'src/app/services/books.service';
 import { LoadingService } from 'src/app/services/loading/loading.service';
+import { ToastService } from 'src/app/services/toast/toast.service';
 
 @Component({
   selector: 'app-home',
@@ -23,7 +24,8 @@ export class HomeComponent {
   constructor(
     private bookService: BooksService,
     private loadingService: LoadingService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private toast: ToastService
   ) {
     this.getBooks(0);
     this.bookFormGroup = this.fb.group({
@@ -31,6 +33,7 @@ export class HomeComponent {
       titre: [''],
       nb_exemplaire: [''],
       url: [''],
+      code: [''],
     });
   }
 
@@ -39,7 +42,14 @@ export class HomeComponent {
   }
 
   getBooks(pageNum:number) {
-    this.books$ = this.bookService.getBooks(pageNum);
+    this.books$ = this.bookService.getBooks(pageNum).pipe(
+      map((data: any)=>{
+        if(data._embedded.livres.length==0){
+          return null;
+        }
+        return data;
+      })
+    );
   }
 
   addBook() {
@@ -59,6 +69,7 @@ export class HomeComponent {
         buttonCloseModal?.click();
         this.getBooks(this.page);
         this.loadingService.close();
+        this.toast.show("Book Has Been Added","success")
       },
       error: (err) => {
         console.log(err);
@@ -83,6 +94,8 @@ export class HomeComponent {
         buttonCloseModal?.click();
         this.getBooks(this.page);
         this.loadingService.close();
+        this.toast.show("Book Has Been updated","success")
+
       },
       error: (err) => {
         console.log(err);
@@ -112,6 +125,8 @@ export class HomeComponent {
   }
 
   editBookModal(book: any) {
+    console.log(book)
+    let id = book._links.self.href.split('/')[4];
     this.formFlag.title = 'Edit Book';
     this.formFlag.action = 'editBook';
     this.bookFormGroup.setValue({
@@ -119,12 +134,7 @@ export class HomeComponent {
       titre: book.titre,
       nb_exemplaire: book.nb_exemplaire,
       url: book.url,
-    });
-    this.bookFormGroup.setValue({
-      auteur: book.auteur,
-      titre: book.titre,
-      nb_exemplaire: book.nb_exemplaire,
-      url: book.url,
+      code: id
     });
   }
 
@@ -135,12 +145,12 @@ export class HomeComponent {
     this.bookFormGroup.reset();
   }
 
-  formSubmit(book: any) {
-    let id = book._links.self.href.split('/')[4];
+  formSubmit() {
+    // let id = book._links.self.href.split('/')[4];
     if (this.formFlag.action == 'addBook') {
       this.addBook();
     } else {
-      this.editBook(id);
+      this.editBook(this.bookFormGroup.value.code);
     }
   }
 
